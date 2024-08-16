@@ -33,8 +33,8 @@ export class Chain {
     pos: Vec2,
     {
       speed = 4,
-      accelDistance = 50,
-      stopDist = 10,
+      accelDistance = 1,
+      stopDist = 0,
       maxAngleDiff = this.angleConstraint,
       scale = 1,
     }: {

@@ -1,7 +1,22 @@
+import { Hct } from "@material/material-color-utilities";
 import { Vec2 } from "./vec2";
 
 const PI = Math.PI;
 const TWO_PI = Math.PI * 2;
+
+export function newHCT({
+  hue = random(0, 360),
+  chroma = random(0, 100),
+  tone = random(0, 100),
+}) {
+  const rgb = Hct.from(hue, chroma, tone).toInt();
+
+  return "#" + rgb.toString(16).slice(2);
+}
+
+export function random(min: number, max: number) {
+  return Math.random() * (max - min) + min;
+}
 
 // Constrain the vector to be at a certain range of the anchor
 export function constrainDistance(pos: Vec2, anchor: Vec2, constraint: number) {

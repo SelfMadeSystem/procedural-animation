@@ -17,12 +17,16 @@ export class Vec2 {
     return new Vec2(this.x - other.x, this.y - other.y);
   }
 
-  mult(scalar: number): Vec2 {
-    return new Vec2(this.x * scalar, this.y * scalar);
+  mult(other: number | Vec2): Vec2 {
+    if (typeof other === "number")
+      return new Vec2(this.x * other, this.y * other);
+    return new Vec2(this.x * other.x, this.y * other.y);
   }
 
-  div(scalar: number): Vec2 {
-    return new Vec2(this.x / scalar, this.y / scalar);
+  div(other: number | Vec2): Vec2 {
+    if (typeof other === "number")
+      return new Vec2(this.x / other, this.y / other);
+    return new Vec2(this.x / other.x, this.y / other.y);
   }
 
   dot(other: Vec2): number {
@@ -70,17 +74,26 @@ export class Vec2 {
 
   /**
    * Returns a new Vec2 such that the angle formed between A, B (center) and the new Vec2 is `angle`.
-   * 
+   *
    * @param a The first point.
    * @param b The second (center) point.
    * @param theta The angle ∠ABX.
    * @param distance The distance from B to X.
    */
-  static fromAngleBetween(a: Vec2, b: Vec2, theta: number, distance: number): Vec2 {
+  static fromAngleBetween(
+    a: Vec2,
+    b: Vec2,
+    theta: number,
+    distance: number
+  ): Vec2 {
     const angle = Math.atan2(b.y - a.y, b.x - a.x);
     return new Vec2(
       a.x + distance * Math.cos(angle + theta),
       a.y + distance * Math.sin(angle + theta)
     );
+  }
+
+  static random(): Vec2 {
+    return new Vec2(Math.random(), Math.random());
   }
 }

@@ -1,7 +1,7 @@
 import { Animal } from "./animal";
 import { Chain } from "./chain";
 import { CurveRender } from "./curverender";
-import { relativeAngleDiff } from "./mathutils";
+import { random, newHCT, relativeAngleDiff } from "./mathutils";
 import { Vec2 } from "./vec2";
 
 // Bloopy lil dude
@@ -10,8 +10,11 @@ export class Fish implements Animal {
 
   scale: number = 1;
   eh: number = Math.random() * 0.25 + 0.5;
-  bodyColor: string = "rgb(58, 124, 165)";
-  finColor: string = "rgb(129, 195, 215)";
+  private _hue: number = random(0, 360);
+  bodyColor: string = newHCT({ hue: this._hue, chroma: 100, tone: 50 });
+  finColor: string = newHCT({ hue: this._hue, chroma: 100, tone: 70 });
+  outlineColor: string = newHCT({ hue: this._hue, chroma: 100, tone: 95 });
+  eyeColor: string = newHCT({ hue: this._hue, chroma: 100, tone: 90 });
 
   // Width of the fish at each vertabra
   bodyWidth: number[] = [68, 81, 84, 83, 77, 64, 51, 38, 32, 19];
@@ -23,12 +26,15 @@ export class Fish implements Animal {
   }
 
   resolve(mousePos: Vec2) {
-    this.spine.moveTowards(mousePos, { maxAngleDiff: 0.025, scale: this.eh });
+    this.spine.moveTowards(mousePos, {
+      maxAngleDiff: 0.01 / this.scale,
+      scale: this.eh,
+    });
   }
 
   display(ctx: CanvasRenderingContext2D) {
     ctx.lineWidth = 8 * this.scale;
-    ctx.strokeStyle = "white";
+    ctx.strokeStyle = this.outlineColor;
     ctx.fillStyle = this.bodyColor;
     ctx.lineJoin = "round";
 
@@ -48,46 +54,58 @@ export class Fish implements Animal {
     const headToTail = headToMid1 + relativeAngleDiff(a[6], a[11]);
 
     // === START PECTORAL FINS ===
-    ctx.save();
-    ctx.beginPath();
-    ctx.translate(...this.getPos(3, Math.PI / 3, 0).a());
-    ctx.rotate(a[2] - Math.PI / 4);
-    ctx.ellipse(0, 0, 80 * this.scale, 32 * this.scale, 0, 0, Math.PI * 2); // Right
-    ctx.fill();
-    ctx.stroke();
-    ctx.closePath();
-    ctx.restore();
+    {
+      const center = this.getPos(3, Math.PI / 3, 0);
+      const angle = a[2] - Math.PI / 4;
+      ctx.beginPath();
+      ctx.ellipse(
+        ...center.a(),
+        80 * this.scale,
+        32 * this.scale,
+        angle,
+        0,
+        Math.PI * 2
+      );
+      ctx.fill();
+      ctx.stroke();
+    }
 
-    ctx.save();
-    ctx.beginPath();
-    ctx.translate(...this.getPos(3, -Math.PI / 3, 0).a());
-    ctx.rotate(a[2] + Math.PI / 4);
-    ctx.ellipse(0, 0, 80 * this.scale, 32 * this.scale, 0, 0, Math.PI * 2); // Left
-    ctx.fill();
-    ctx.stroke();
-    ctx.closePath();
-    ctx.restore();
+    {
+      const center = this.getPos(3, -Math.PI / 3, 0);
+      const angle = a[2] + Math.PI / 4;
+      ctx.beginPath();
+      ctx.ellipse(
+        ...center.a(),
+        80 * this.scale,
+        32 * this.scale,
+        angle,
+        0,
+        Math.PI * 2
+      );
+      ctx.fill();
+      ctx.stroke();
+    }
     // === END PECTORAL FINS ===
 
     // === START VENTRAL FINS ===
-    ctx.save();
-    ctx.beginPath();
-    ctx.translate(...this.getPos(7, Math.PI / 2, 0).a());
-    ctx.rotate(a[6] - Math.PI / 4);
-    ctx.ellipse(0, 0, 32 * this.scale, 16 * this.scale, 0, 0, Math.PI * 2); // Right
-    ctx.fill();
-    ctx.stroke();
-    ctx.restore();
+    // ctx.save();
+    // ctx.beginPath();
+    // ctx.translate(...this.getPos(7, Math.PI / 2, 0).a());
+    // ctx.rotate(a[6] - Math.PI / 4);
+    // ctx.ellipse(0, 0, 32 * this.scale, 16 * this.scale, 0, 0, Math.PI * 2); // Right
+    // ctx.fill();
+    // ctx.stroke();
+    // ctx.restore();
 
-    ctx.save();
-    ctx.beginPath();
-    ctx.translate(...this.getPos(7, -Math.PI / 2, 0).a());
-    ctx.rotate(a[6] + Math.PI / 4);
-    ctx.ellipse(0, 0, 32 * this.scale, 16 * this.scale, 0, 0, Math.PI * 2); // Left
-    ctx.fill();
-    ctx.stroke();
-    ctx.closePath();
-    ctx.restore();
+    // ctx.save();
+    // ctx.beginPath();
+    // ctx.translate(...this.getPos(7, -Math.PI / 2, 0).a());
+    // ctx.rotate(a[6] + Math.PI / 4);
+    // ctx.ellipse(0, 0, 32 * this.scale, 16 * this.scale, 0, 0, Math.PI * 2); // Left
+    // ctx.fill();
+    // ctx.stroke();
+    // ctx.closePath();
+    // ctx.restore();
     // === END VENTRAL FINS ===
 
     const { curve, reset } = CurveRender(ctx);
@@ -103,7 +121,8 @@ export class Fish implements Animal {
 
     // "Top" of the fish
     for (let i = 11; i >= 8; i--) {
-      const tailWidth = Math.max(-13, Math.min(13, headToTail * 6)) * this.scale;
+      const tailWidth =
+        Math.max(-13, Math.min(13, headToTail * 6)) * this.scale;
       const x = j[i].x + Math.cos(a[i] + Math.PI / 2) * tailWidth;
       const y = j[i].y + Math.sin(a[i] + Math.PI / 2) * tailWidth;
       curve(x, y);
@@ -175,7 +194,7 @@ export class Fish implements Animal {
     // === END DORSAL FIN ===
 
     // === START EYES ===
-    ctx.fillStyle = "white";
+    ctx.fillStyle = this.eyeColor;
     ctx.beginPath();
     ctx.ellipse(
       this.getPos(0, Math.PI / 2, -18).x,

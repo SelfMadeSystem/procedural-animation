@@ -1,3 +1,5 @@
+import { Animal } from "./animal";
+import { Fish } from "./fish";
 import { Snake } from "./snake";
 import "./style.css";
 import { Vec2 } from "./vec2";
@@ -25,13 +27,18 @@ canvas.addEventListener("mousemove", (e) => {
   mousePos.y = e.offsetY;
 });
 
-const snake = new Snake(new Vec2(canvas.width / 2, canvas.height / 2), 32);
+// const animal = new Snake(new Vec2(canvas.width / 2, canvas.height / 2), 32);
+const animals: Animal[] = [
+  new Fish(new Vec2(canvas.width / 2, canvas.height / 2), 0.5),
+];
 
 function update() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-  snake.resolve(mousePos);
-  snake.display(ctx);
+  for (const animal of animals) {
+    animal.resolve(mousePos);
+    animal.display(ctx);
+  }
 
   requestAnimationFrame(update);
 }

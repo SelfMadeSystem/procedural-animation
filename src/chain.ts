@@ -36,13 +36,18 @@ export class Chain {
       accelDistance = 50,
       stopDist = 10,
       maxAngleDiff = this.angleConstraint,
+      scale = 1,
     }: {
       speed?: number;
       accelDistance?: number;
       stopDist?: number;
       maxAngleDiff?: number;
+      scale?: number;
     }
   ) {
+    speed *= scale;
+    accelDistance *= scale;
+    stopDist *= scale;
     const distance = pos.distanceTo(this.joints[0]);
 
     if (distance < stopDist) {
@@ -125,14 +130,13 @@ export class Chain {
   getPos(
     i: number,
     angleOffset: number,
-    lengthOffset: number,
     bodyWidth: number
   ): Vec2 {
     return new Vec2(
       this.joints[i].x +
-        Math.cos(this.angles[i] + angleOffset) * (bodyWidth + lengthOffset),
+        Math.cos(this.angles[i] + angleOffset) * (bodyWidth),
       this.joints[i].y +
-        Math.sin(this.angles[i] + angleOffset) * (bodyWidth + lengthOffset)
+        Math.sin(this.angles[i] + angleOffset) * (bodyWidth)
     );
   }
 }

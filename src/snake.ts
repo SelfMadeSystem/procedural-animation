@@ -1,9 +1,10 @@
+import { Animal } from "./animal";
 import { Chain } from "./chain";
 import { CurveRender } from "./curverender";
 import { Vec2 } from "./vec2";
 
 // Wiggly lil dude
-export class Snake {
+export class Snake implements Animal {
   spine: Chain;
 
   constructor(origin: Vec2, linkSize: number) {
@@ -18,32 +19,32 @@ export class Snake {
     ctx.lineWidth = 4;
     ctx.strokeStyle = "white";
     ctx.fillStyle = "rgb(172, 57, 49)";
-    const curveVertex = CurveRender(ctx);
+    const { curve } = CurveRender(ctx);
 
     // === START BODY ===
     ctx.beginPath();
 
     // Right half of the snake
     for (let i = 0; i < this.spine.joints.length; i++) {
-      curveVertex(...this.getPos(i, Math.PI / 2, 0).a());
+      curve(...this.getPos(i, Math.PI / 2, 0).a());
     }
 
-    curveVertex(...this.getPos(47, Math.PI, 0).a());
+    curve(...this.getPos(47, Math.PI, 0).a());
 
     // Left half of the snake
     for (let i = this.spine.joints.length - 1; i >= 0; i--) {
-      curveVertex(...this.getPos(i, -Math.PI / 2, 0).a());
+      curve(...this.getPos(i, -Math.PI / 2, 0).a());
     }
 
     // Top of the head (completes the loop)
-    curveVertex(...this.getPos(0, -Math.PI / 6, 0).a());
-    curveVertex(...this.getPos(0, 0, 0).a());
-    curveVertex(...this.getPos(0, Math.PI / 6, 0).a());
+    curve(...this.getPos(0, -Math.PI / 6, 0).a());
+    curve(...this.getPos(0, 0, 0).a());
+    curve(...this.getPos(0, Math.PI / 6, 0).a());
 
-    // Some overlap needed because curveVertex requires extra vertices that are not rendered
-    curveVertex(...this.getPos(0, Math.PI / 2, 0).a());
-    curveVertex(...this.getPos(1, Math.PI / 2, 0).a());
-    curveVertex(...this.getPos(2, Math.PI / 2, 0).a());
+    // Some overlap needed because curve requires extra vertices that are not rendered
+    curve(...this.getPos(0, Math.PI / 2, 0).a());
+    curve(...this.getPos(1, Math.PI / 2, 0).a());
+    curve(...this.getPos(2, Math.PI / 2, 0).a());
 
     ctx.closePath();
     ctx.fill();
@@ -55,16 +56,16 @@ export class Snake {
     ctx.beginPath();
     ctx.ellipse(
       ...this.getPos(0, Math.PI / 2, -18).a(),
-      12 * this.spine.linkSize / 64,
-      12 * this.spine.linkSize / 64,
+      (12 * this.spine.linkSize) / 64,
+      (12 * this.spine.linkSize) / 64,
       0,
       0,
       2 * Math.PI
     );
     ctx.ellipse(
       ...this.getPos(0, -Math.PI / 2, -18).a(),
-      12 * this.spine.linkSize / 64,
-      12 * this.spine.linkSize / 64,
+      (12 * this.spine.linkSize) / 64,
+      (12 * this.spine.linkSize) / 64,
       0,
       0,
       2 * Math.PI
@@ -89,6 +90,6 @@ export class Snake {
   }
 
   getPos(i: number, angleOffset: number, lengthOffset: number): Vec2 {
-    return this.spine.getPos(i, angleOffset, lengthOffset, this.bodyWidth(i));
+    return this.spine.getPos(i, angleOffset, lengthOffset + this.bodyWidth(i));
   }
 }

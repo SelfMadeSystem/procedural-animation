@@ -25,7 +25,7 @@ export class Snake implements Animal {
     const { curve } = CurveRender(ctx);
 
     // === START BODY ===
-    // ctx.beginPath();
+    ctx.beginPath();
 
     ctx.moveTo(...this.getPos(0, Math.PI / 2, 0).a());
 
@@ -51,31 +51,31 @@ export class Snake implements Animal {
     curve(...this.getPos(1, Math.PI / 2, 0).a());
     curve(...this.getPos(2, Math.PI / 2, 0).a());
 
-    // ctx.closePath();
-    // ctx.fill();
-    // ctx.stroke();
+    ctx.closePath();
+    ctx.fill();
+    ctx.stroke();
     // === END BODY ===
 
     // === START EYES ===
-    // ctx.fillStyle = "white";
-    // ctx.beginPath();
-    // ctx.ellipse(
-    //   ...this.getPos(0, Math.PI / 2, -18).a(),
-    //   12 * this.scale,
-    //   12 * this.scale,
-    //   0,
-    //   0,
-    //   2 * Math.PI
-    // );
-    // ctx.ellipse(
-    //   ...this.getPos(0, -Math.PI / 2, -18).a(),
-    //   12 * this.scale,
-    //   12 * this.scale,
-    //   0,
-    //   0,
-    //   2 * Math.PI
-    // );
-    // ctx.fill();
+    ctx.fillStyle = "white";
+    ctx.beginPath();
+    ctx.ellipse(
+      ...this.getPos(0, Math.PI / 2, -18).a(),
+      12 * this.scale,
+      12 * this.scale,
+      0,
+      0,
+      2 * Math.PI
+    );
+    ctx.ellipse(
+      ...this.getPos(0, -Math.PI / 2, -18).a(),
+      12 * this.scale,
+      12 * this.scale,
+      0,
+      0,
+      2 * Math.PI
+    );
+    ctx.fill();
     // === END EYES ===
   }
 

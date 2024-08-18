@@ -218,6 +218,10 @@ export class Fish implements Animal {
     // === END EYES ===
   }
 
+  debugDisplay(ctx: CanvasRenderingContext2D): void {
+    this.spine.display(ctx);
+  }
+
   // Various helpers to shorten lines
   getPos(i: number, angleOffset: number, lengthOffset: number) {
     return this.spine.getPos(

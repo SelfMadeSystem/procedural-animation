@@ -64,8 +64,17 @@ export class Vec2 {
     );
   }
 
+  // returns 1 / this
+  inverse(): Vec2 {
+    return new Vec2(1 / this.x, 1 / this.y);
+  }
+
   setMag(length: number): Vec2 {
     return this.normalize().mult(length);
+  }
+
+  equals(other: Vec2): boolean {
+    return this.x === other.x && this.y === other.y;
   }
 
   static fromAngle(angle: number, length: number = 1): Vec2 {

@@ -1,6 +1,7 @@
 import { Animal } from "./animal";
 import { Fish } from "./fish";
 import { random } from "./mathutils";
+import { Seaweed } from "./seaweed";
 import { Snake } from "./snake";
 import "./style.css";
 import { Vec2 } from "./vec2";
@@ -26,13 +27,31 @@ canvas.addEventListener("mousemove", (e) => {
 });
 
 // const animal = new Snake(new Vec2(canvas.width / 2, canvas.height / 2), 32);
-const animals: Animal[] = new Array(10)
-  .fill(0)
-  .map(
-    () =>
-      new Fish(new Vec2(canvas.width, canvas.height).mult(Vec2.random()), random(0.05, 0.5))
-  )
-  .sort((a, b) => a.eh - b.eh);
+// const animals: Animal[] = new Array(10)
+//   .fill(0)
+//   .map(
+//     () =>
+//       new Fish(new Vec2(canvas.width, canvas.height).mult(Vec2.random()), random(0.05, 0.5))
+//   )
+//   .sort((a, b) => a.eh - b.eh);
+const animals: Animal[] = [
+  new Fish(
+    new Vec2(canvas.width, canvas.height).mult(Vec2.random()),
+    random(0.05, 0.5)
+  ),
+  new Fish(
+    new Vec2(canvas.width, canvas.height).mult(Vec2.random()),
+    random(0.05, 0.5)
+  ),
+];
+
+const t = 30;
+
+for (let i = 0; i <= 1; i += 1 / t) {
+  animals.push(
+    new Seaweed(new Vec2(canvas.width * (i * 0.5 + 0.25), canvas.height), 0.1)
+  );
+}
 
 let prevDeltas: number[] = [];
 let prevTime = performance.now();
@@ -50,25 +69,26 @@ function getFps() {
   }
 
   prevTime = currentTime;
-  return 1000 / averageDelta();
+  return [1000 / averageDelta(), dt];
 }
 
 function update() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-  ctx.beginPath();
+  const [fps, sdt] = getFps();
+  const dt = sdt / 1000;
+
   for (const animal of animals) {
-    animal.resolve(mousePos);
+    animal.resolve(mousePos, dt);
     animal.display(ctx);
+    // animal.debugDisplay(ctx);
   }
-  ctx.closePath();
-  ctx.fill();
 
   ctx.fillStyle = "white";
 
   ctx.font = "24px sans-serif";
 
-  ctx.fillText(`FPS: ${getFps().toFixed(2)}`, 10, 30);
+  ctx.fillText(`FPS: ${fps.toFixed(2)}`, 10, 30);
 
   requestAnimationFrame(update);
 }

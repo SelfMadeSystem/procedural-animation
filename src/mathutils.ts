@@ -14,13 +14,35 @@ export function newHCT({
   return "#" + rgb.toString(16).slice(2);
 }
 
+export function mod(n: number, m: number) {
+  return ((n % m) + m) % m;
+}
+
 export function random(min: number, max: number) {
   return Math.random() * (max - min) + min;
 }
 
 // Constrain the vector to be at a certain range of the anchor
-export function constrainDistance(pos: Vec2, anchor: Vec2, constraint: number) {
+export function constrainDistance(
+  pos: Vec2,
+  anchor: Vec2,
+  constraint: number
+): Vec2 {
   return anchor.add(pos.sub(anchor).setMag(constraint));
+}
+
+// Constrain two vectors to be at a certain range from each other
+//
+// Makes sure the amount it changes is equal for both vectors
+export function constrainDistanceBoth(
+  a: Vec2,
+  b: Vec2,
+  constraint: number
+): [vecA: Vec2, vecB: Vec2] {
+  const avg = a.add(b).mult(0.5);
+  const vecA = a.sub(avg).setMag(constraint / 2);
+  const vecB = b.sub(avg).setMag(constraint / 2);
+  return [vecA.add(avg), vecB.add(avg)];
 }
 
 // Constrain the angle to be within a certain range of the anchor
